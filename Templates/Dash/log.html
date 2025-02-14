@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Log</title>
+</head>
+<body>
+    <a href="/admin/">返回</a>
+    <p>This is the log!</p>
+    <ul>
+        {% for log in log_data %}
+            <li>level:{{ log.level }}----message:{{ log.message }}----datatime:{{ log.create_datetime }}</li>
+            <br>
+        {% endfor %}
+    </ul>
+</body>
+</html>

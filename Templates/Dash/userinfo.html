@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>UserInfo</title>
+        <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+    </style>
+    </head>
+    <body>
+{#        <p>{{ url_code }}</p>#}
+        {% if url_code == None %}
+            <a href="/admin/">返回</a>
+            <p>This is the UserInfo!</p>
+            <ul>
+                <li><a href="list/">查看所有用户</a></li>
+                <li><a href="add/">添加用户</a></li>
+                <li><a href="edit/">修改用户</a></li>
+                <li><a href="delete/">删除用户</a></li>
+            </ul>
+        {% endif %}
+
+
+
+        {% if url_code == "list/" %}
+            <a href="/admin/userinfo/">返回</a>
+            <p>This is the list!</p>
+            <ul>
+                {% for name in name_list %}
+                	<li>{{ name }}</li>
+                    <br>
+                {% endfor %}
+            </ul>
+
+        {% endif %}
+
+
+
+        {% if url_code == "add/" %}
+            <a href="/admin/userinfo/">返回</a>
+            <p>This is the add!</p>
+            <form id="userForm">
+            {% csrf_token %}
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>用户名</th>
+                            <th>密码</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="username" id="username" placeholder="用户名" required></td>
+                            <td><input type="text" name="password" id="password" placeholder="密码" required></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="addRow()">添加一行</button>
+                <button type="button" onclick="submitForm()">提交</button>
+            </form>
+            {% if flag %}
+            <p style="color: red;">用户创建失败:</p>
+            <ul>
+            {% for name in error_add %}
+                <li style="color: red;">{{ name }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endif %}
+
+
+
+        {% if url_code == "edit/" %}
+            <a href="/admin/userinfo/">返回</a>
+            <p>This is the edit!</p>
+            <form method="post">
+            {% csrf_token %}
+                {% if not being %}
+                <input class="input100" type="text" name="old_name" id="old_name" placeholder="请输入用户名" required>
+                    <br><br>
+                <div class="container-login100-form-btn">
+                    <button type="submit">编辑</button>
+                </div>
+                {% endif %}
+                {% if being %}
+                    <div class="wrap-input100 validate-input m-b-26">
+                    <input class="input100" type="text" name="new_name" id="new_name" placeholder="新用户名" required>
+                    <br><br>
+                    </div>
+                	<div class="wrap-input100 validate-input m-b-26">
+                    <input class="input100" type="password" name="new_password" id="new_password" placeholder="新密码-旧:{{ old_password }}" required>
+                    <br><br>
+                    </div>
+                <div class="container-login100-form-btn">
+                    <button type="submit">提交</button>
+                </div>
+                {% endif %}
+                {% if error_del %}
+                    <p style="color: red;">{{ error_del }}</p>
+                {% endif %}
+            </form>
+        {% endif %}
+
+
+
+        {% if url_code == "delete/" %}
+            <a href="/admin/userinfo/">返回</a>
+            <p>This is the del!</p>
+            <form method="post">
+            {% csrf_token %}
+                <input class="input100" type="text" name="username" id="username" placeholder="请输入用户名" required>
+                <br><br>
+                <div class="container-login100-form-btn">
+                    <button type="submit">删除</button>
+                </div>
+                {% if error_del %}
+                    <p style="color: red;">{{ error_del }}</p>
+                {% endif %}
+            </form>
+
+        {% endif %}
+
+
+    </body>
+
+
+
+    <script>
+        function addRow() {
+            const table = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            const cell1 = newRow.insertCell(0);
+            const cell2 = newRow.insertCell(1);
+
+            cell1.innerHTML = '<input type="text" name="username" id="username" placeholder="用户名">';
+            cell2.innerHTML = '<input type="text" name="password" id="password" placeholder="密码">';
+        }
+
+        function submitForm() {
+            const form = document.getElementById('userForm');
+            const formData = new FormData(form);
+
+            fetch("", {
+                method: 'POST',
+                body: formData,
+                redirect: "manual"
+            })
+            .then(response => {
+                console.log(formData)
+                console.log(response)
+                {#if (response.ok) {#}
+                {#    return response.json()#}
+                {# } else {#}
+                {#    throw new Error('Network response was not ok.');#}
+                {# }#}
+            })
+            .then(data => {
+                alert('用户添加成功！');
+                console.log(data);
+            })
+            .catch(error => {
+                alert("错误:" + error);
+                console.error('Error:', error);
+            });
+        }
+    </script>
+
+
+</html>
